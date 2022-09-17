@@ -11,6 +11,7 @@ import { MusicQueue } from "./MusicQueue";
 const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export class Bot {
+  public readonly blacklistedUser = "282670798810906625";
   public readonly prefix = config.PREFIX;
   public commands = new Collection<string, Command>();
   public cooldowns = new Collection<string, Collection<Snowflake, number>>();
@@ -42,7 +43,7 @@ export class Bot {
 
   private async onMessageCreate() {
     this.client.on("messageCreate", async (message: any) => {
-      if (message.author.bot || !message.guild) return;
+      if (message.author.bot || !message.guild || message.author.id === this.blacklistedUser) return;
 
       const prefixRegex = new RegExp(`^(<@!?${this.client.user!.id}>|${escapeRegex(this.prefix)})\\s*`);
       if (!prefixRegex.test(message.content)) return;
